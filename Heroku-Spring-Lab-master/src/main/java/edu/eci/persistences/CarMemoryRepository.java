@@ -50,7 +50,7 @@ public class CarMemoryRepository implements ICarRepository {
 	@Override
 	public String save(Car c) {
 		CarMemoryRepository.getContainer().add(c);
-	        return c.getLicencePlate());
+	        return c.getLicencePlate();
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class CarMemoryRepository implements ICarRepository {
 	public void remove(String plate) {
 		 UserMemoryRepository.usersContainer = UserMemoryRepository.getContainer()
 	                .stream()
-	                .filter(u -> !u.getId().equals(id))
+	                .filter(u -> !u.getId().equals(plate))
 	                .collect(toList());
 		
 	}
