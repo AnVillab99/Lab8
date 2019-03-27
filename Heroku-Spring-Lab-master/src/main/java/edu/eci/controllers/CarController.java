@@ -28,7 +28,7 @@ public class CarController {
          }
     }
     
-    @ResponseBody
+   /* @ResponseBody
     @RequestMapping(value="/{plate}",method = RequestMethod.GET)
     public ResponseEntity<?> getCar(String plate){
     	 try{
@@ -36,7 +36,7 @@ public class CarController {
          }catch(Exception e){
              return new ResponseEntity<>(e.getStackTrace(), HttpStatus.INTERNAL_SERVER_ERROR);
          }
-    }
+    }*/
     
 
     @ResponseBody
@@ -61,10 +61,10 @@ public class CarController {
     }
 
     @ResponseBody
-    @RequestMapping(method = RequestMethod.DELETE, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> deleteCar(@RequestBody String plate){
+    @RequestMapping(value="/{plate}",method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteCar(@PathVariable String plate){
     	try{
-            carServices.delete(plate); 
+            carServices.remove(plate); 
             return new ResponseEntity<>("Deleted", HttpStatus.CREATED);
         }catch(Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);

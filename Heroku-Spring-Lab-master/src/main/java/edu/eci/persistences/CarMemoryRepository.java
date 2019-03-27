@@ -64,18 +64,19 @@ public class CarMemoryRepository implements ICarRepository {
 
 	@Override
 	public void remove(String plate) {
-		 UserMemoryRepository.usersContainer = UserMemoryRepository.getContainer()
+		System.out.println("feqwefewwefwefuhewifuhew9ufhwer8fhwei0ofhweoiufjweoijfo");
+		CarMemoryRepository.carsContainer = CarMemoryRepository.getContainer()
 	                .stream()
-	                .filter(u -> !u.getId().equals(plate))
+	                .filter(u -> !u.getLicencePlate().equals(plate))
 	                .collect(toList());
 		
 	}
 
 	@Override
 	public void delete(Car c) {
-		 UserMemoryRepository.usersContainer = UserMemoryRepository.getContainer()
+		CarMemoryRepository.carsContainer = CarMemoryRepository.getContainer()
 	                .stream()
-	                .filter(u -> !u.getId().equals(c.getLicencePlate()))
+	                .filter(u -> !u.getLicencePlate().equals(c.getLicencePlate()))
 	                .collect(toList());
 		
 	}

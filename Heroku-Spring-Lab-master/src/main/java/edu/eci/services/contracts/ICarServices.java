@@ -16,7 +16,7 @@ public interface ICarServices {
     Car create(Car car);
     Car get(String plate);
 	void updateCar(Car c);
-	void delete(String plate);
+	void remove(String plate);
 
 
 }

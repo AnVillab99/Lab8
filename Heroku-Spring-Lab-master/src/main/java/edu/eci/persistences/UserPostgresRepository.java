@@ -1,17 +1,19 @@
 package edu.eci.persistences;
-
+/*
 import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariDataSource;*/
 import edu.eci.models.User;
 import edu.eci.persistences.repositories.IUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
+//import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,10 +25,26 @@ import java.util.UUID;
 @Qualifier("UserPostgresRepository")
 public class UserPostgresRepository implements IUserRepository {
 
-    private String dbUrl = null;
+	private final String url = "jdbc:postgresql://ec2-75-101-133-29.compute-1.amazonaws.com:5432/d7d3tqe5mb1jkc";
+	private final String user = "jorgqaevrolidy";
+	private final String password = "f8f673b4e4129b2ebc63e13d188486ec9bd7d4fad09e57a51cf4be137f87233c";
 
-    @Autowired
-    private DataSource dataSource;
+	public Connection connect() {
+		Connection conn = null;
+		try {
+
+			conn = DriverManager.getConnection(url, user, password);
+			System.out.println("Connected to the PostgreSQL server successfully.");
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+
+		return conn;
+	}
+
+
+    /*@Autowired
+    private DataSource dataSource;*/
 
     @Override
     public User getUserByUserName(String userName) {
@@ -38,7 +56,8 @@ public class UserPostgresRepository implements IUserRepository {
         String query = "SELECT * FROM users";
         List<User> users=new ArrayList<>();
 
-        try(Connection connection = dataSource.getConnection()){
+        try(
+        	Connection connection = connect()){
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()){
@@ -61,7 +80,24 @@ public class UserPostgresRepository implements IUserRepository {
 
     @Override
     public UUID save(User entity) {
-        return null;
+    	long id = 0;
+		String SQL = "INSERT INTO users(name,id) " + "VALUES(?,?)";
+		try (Connection conn = connect();
+				PreparedStatement pstmt = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
+
+			pstmt.setString(1, entity.getName());
+			pstmt.setString(2, entity.getId().toString());
+			
+
+			int affectedRows = pstmt.executeUpdate();
+			// check the affected rows
+			System.out.println(findAll());
+		} catch (SQLException ex) {
+			System.out.println(ex.getMessage());
+			return null;
+		}
+		return entity.getId();
+
     }
 
     @Override
@@ -78,7 +114,7 @@ public class UserPostgresRepository implements IUserRepository {
     public void remove(Long id) {
 
     }
-
+/*
     @Bean
     public DataSource dataSource() throws SQLException {
         if (dbUrl == null || dbUrl.isEmpty()) {
@@ -88,5 +124,5 @@ public class UserPostgresRepository implements IUserRepository {
             config.setJdbcUrl(dbUrl);
             return new HikariDataSource(config);
         }
-    }
+    }*/
 }

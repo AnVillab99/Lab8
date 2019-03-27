@@ -14,7 +14,7 @@ import java.util.UUID;
 public class UserServices implements IUserServices {
 
 	@Autowired
-	@Qualifier("UserMemoryRepository")
+	@Qualifier("UserPostgresRepository")
 	private IUserRepository userRepository;
 
 	
@@ -23,14 +23,17 @@ public class UserServices implements IUserServices {
 	}
 
 	@Override
-	public User create(User user) {
+	public User create(User user) {		
+		
+		/*
 		if (null == user.getId())
 			throw new RuntimeException("Id invalid");
 		else if (userRepository.find(user.getId()) != null)
 			throw new RuntimeException("The user exists");
 		else
-			userRepository.save(user);
-		return user;
+			userRepository.save(user);*/
+		return get(userRepository.save(user));
+		
 	}
 
 	@Override
@@ -45,18 +48,13 @@ public class UserServices implements IUserServices {
 
 	@Override
 	public void updateUser(User u) {
-		List<User> users = list();
-		for (User U : users) {
-			if (U.getName().equals(u.getName()) || U.getId().equals(u.getId())) {
-				U.setName(u.getName());
-				U.setId(u.getId());
-			}
-		}
+		userRepository.update(u);
 	}
 	@Override
 	public void delete(UUID u) {
+	
 
-		userRepository.remove(Long.parseLong(u.toString()));
+		userRepository.delete(get(u));
 
 	}
 }

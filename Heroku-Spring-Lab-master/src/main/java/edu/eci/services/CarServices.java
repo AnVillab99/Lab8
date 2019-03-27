@@ -54,24 +54,16 @@ public class CarServices implements ICarServices{
 
 	@Override
 	public void updateCar(Car ce) {
-		List<Car> cars = list();
-		boolean h =false;
-		for (Car c : cars) {
-			if (c.getLicencePlate().equals(ce.getLicencePlate())) {
-				c.setBrand(ce.getBrand());				
-				h=true;
-			}
-		}
-		if(!h) {
-			throw new RuntimeException("The car doesn't exists");
-		}
+		
+		carRepository.update(ce);		
 		
 	}
 
 
 	@Override
-	public void delete(String plate) {
-		carRepository.remove(plate);
+	public void remove(String plate) {
+	
+		carRepository.delete(get(plate));
 		
 	}
 	
