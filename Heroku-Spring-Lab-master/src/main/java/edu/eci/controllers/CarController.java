@@ -27,6 +27,17 @@ public class CarController {
              return new ResponseEntity<>(e.getStackTrace(), HttpStatus.INTERNAL_SERVER_ERROR);
          }
     }
+    
+    @ResponseBody
+    @RequestMapping(value="/{plate}",method = RequestMethod.GET)
+    public ResponseEntity<?> getCar(String plate){
+    	 try{
+             return new ResponseEntity<>(carServices.get(plate), HttpStatus.OK);
+         }catch(Exception e){
+             return new ResponseEntity<>(e.getStackTrace(), HttpStatus.INTERNAL_SERVER_ERROR);
+         }
+    }
+    
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})

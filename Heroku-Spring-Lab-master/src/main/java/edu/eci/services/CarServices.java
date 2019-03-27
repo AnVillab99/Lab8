@@ -4,13 +4,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import edu.eci.models.Car;
 import edu.eci.models.User;
 import edu.eci.persistences.CarMemoryRepository;
 import edu.eci.persistences.repositories.ICarRepository;
 import edu.eci.services.contracts.ICarServices;
-
+@Component
 public class CarServices implements ICarServices{
 	@Autowired
 	@Qualifier("CarMemoryRepository")
@@ -34,17 +35,20 @@ public class CarServices implements ICarServices{
 
 	@Override
 	public Car get(String plate) {
+		/*
 		List<Car> cars = list();
 		Car r =null;
 		for (Car c : cars) {
 			if (c.getLicencePlate().equals(plate)) {
-				r=c;
+				return c;
 			}
+			break;
 		}
 		if(r.equals(null)) {
 			throw new RuntimeException("The car doesn't exists");
 		}
-		return r;
+		return r;*/
+		return carRepository.getCarByPlate(plate);
 	}
 
 
@@ -53,9 +57,8 @@ public class CarServices implements ICarServices{
 		List<Car> cars = list();
 		boolean h =false;
 		for (Car c : cars) {
-			if (c.getBrand().equals(ce.getBrand()) && c.getLicencePlate().equals(ce.getLicencePlate())) {
-				c.setBrand(ce.getBrand());
-				c.setLicencePlate(ce.getLicencePlate());
+			if (c.getLicencePlate().equals(ce.getLicencePlate())) {
+				c.setBrand(ce.getBrand());				
 				h=true;
 			}
 		}
