@@ -9,6 +9,7 @@ import edu.eci.models.Car;
 
 @Repository
 public interface ICarRepository extends DAOC {
+
 	Car getCarByPlate(String userName);
 
 	public List<Car> findAll();
