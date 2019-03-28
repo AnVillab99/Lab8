@@ -1,4 +1,5 @@
 package edu.eci.persistences;
+
 /*
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;*/
@@ -42,87 +43,171 @@ public class UserPostgresRepository implements IUserRepository {
 		return conn;
 	}
 
+	/*
+	 * @Autowired private DataSource dataSource;
+	 */
 
-    /*@Autowired
-    private DataSource dataSource;*/
+	@Override
+	public User getUserByUserName(String userName) {
+		System.out.println("by name");
+		String query = "SELECT * FROM users where name =(?);";
+		User user = new User();
 
-    @Override
-    public User getUserByUserName(String userName) {
-        return null;
-    }
+		try (Connection connection = connect()) {
 
-    @Override
-    public List<User> findAll() {
-        String query = "SELECT * FROM users";
-        List<User> users=new ArrayList<>();
+			PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, userName);
 
-        try(
-        	Connection connection = connect()){
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()){
-                User user = new User();
-                user.setName(rs.getString("name"));
-                user.setId(UUID.fromString(rs.getString("id")));
-                users.add(user);
-            }
-            return users;
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
+			ResultSet rs = pstmt.executeQuery(query);
+			while (rs.next()) {
+				user.setName(rs.getString("name"));
+				user.setId(UUID.fromString(rs.getString("id")));
 
-    @Override
-    public User find(UUID id) {
-        return null;
-    }
+			}
+			return user;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw new RuntimeException(e);
+		}
+	}
 
-    @Override
-    public UUID save(User entity) {
-    	long id = 0;
-		String SQL = "INSERT INTO users(name,id) " + "VALUES(?,?)";
+	@Override
+	public List<User> findAll() {
+		System.out.println("all");
+		String query = "SELECT * FROM users;";
+		List<User> users = new ArrayList<>();
+
+		try (Connection connection = connect()) {
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next()) {
+				User user = new User();
+				user.setName(rs.getString("name"));
+				user.setId(UUID.fromString(rs.getString("id")));
+				users.add(user);
+			}
+			connection.close();
+			return users;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public User find(UUID id) {
+		System.out.println("find");
+		String query = "SELECT * FROM users where id =(?);";
+		User user = new User();
+
+		try (Connection connection = connect()) {
+
+			PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, id.toString());
+
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				user.setName(rs.getString("name"));
+				user.setId(UUID.fromString(rs.getString("id")));
+
+			}
+			connection.close();
+			return user;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public UUID save(User entity) {
+		System.out.println("save");
+	
+		String SQL = "INSERT INTO users(name,id) " + "VALUES(?,?);";
 		try (Connection conn = connect();
 				PreparedStatement pstmt = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
 
 			pstmt.setString(1, entity.getName());
 			pstmt.setString(2, entity.getId().toString());
-			
-
-			int affectedRows = pstmt.executeUpdate();
+			pstmt.execute();
+			pstmt.executeUpdate();
 			// check the affected rows
 			System.out.println(findAll());
+			conn.close();
 		} catch (SQLException ex) {
 			System.out.println(ex.getMessage());
 			return null;
 		}
 		return entity.getId();
 
-    }
+	}
 
-    @Override
-    public void update(User entity) {
+	@Override
 
-    }
+	public void update(User entity) {
+		System.out.println("update");
+		String SQL = "UPDATE users SET name = (?) WHERE id=(?);";
+		try (Connection conn = connect();
+				PreparedStatement pstmt = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
 
-    @Override
-    public void delete(User o) {
+			pstmt.setString(1, entity.getName());
+			pstmt.setString(2, entity.getId().toString());
 
-    }
+			pstmt.execute();
+			pstmt.executeUpdate();
+			// check the affected rows
+			System.out.println(findAll());
+			conn.close();
+		} catch (SQLException ex) {
+			System.out.println(ex.getMessage());
 
-    @Override
-    public void remove(Long id) {
+		}
 
-    }
-/*
-    @Bean
-    public DataSource dataSource() throws SQLException {
-        if (dbUrl == null || dbUrl.isEmpty()) {
-            return new HikariDataSource();
-        } else {
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(dbUrl);
-            return new HikariDataSource(config);
-        }
-    }*/
+	}
+
+	@Override
+	public void delete(User o) {
+		String query = "DELETE FROM users WHERE id =(?);";	
+		System.out.println("borrar");
+
+		try (Connection connection = connect()) {
+
+			PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, o.getId().toString());
+			pstmt.execute();
+			
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	@Override
+	public void remove(Long id) {
+		System.out.println("borrar2");
+		
+		String query = "DELETE users where id =(?)";		
+
+		try (Connection connection = connect()) {
+
+			PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, id.toString());
+			pstmt.execute();
+			
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw new RuntimeException(e);
+		}
+
+
+	}
+	/*
+	 * @Bean public DataSource dataSource() throws SQLException { if (dbUrl == null
+	 * || dbUrl.isEmpty()) { return new HikariDataSource(); } else { HikariConfig
+	 * config = new HikariConfig(); config.setJdbcUrl(dbUrl); return new
+	 * HikariDataSource(config); } }
+	 */
 }

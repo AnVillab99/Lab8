@@ -14,8 +14,8 @@ import edu.eci.services.contracts.ICarServices;
 @Component
 public class CarServices implements ICarServices{
 	@Autowired
-	@Qualifier("CarMemoryRepository")
-	private CarMemoryRepository carRepository;
+	@Qualifier("CarPostgresRepository")
+	private ICarRepository carRepository;
 	
 	public List<Car> list() {
 		return carRepository.findAll();
@@ -23,12 +23,14 @@ public class CarServices implements ICarServices{
 	
 	
 	public Car create(Car car) {
+		carRepository.save(car);/*
 		if (null == car.getLicencePlate())
 			throw new RuntimeException("Plate invalid");
 		else if (carRepository.find(car.getLicencePlate()) != null)
 			throw new RuntimeException("The car exists");
 		else
 			carRepository.save(car);
+		return car;*/
 		return car;
 	}
 

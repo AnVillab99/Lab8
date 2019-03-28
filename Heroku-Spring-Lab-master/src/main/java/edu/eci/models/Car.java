@@ -5,9 +5,12 @@ public class Car {
     private String licencePlate;
     private String brand;
     
-    public Car(String plate, String brand) {
+    
+    public Car() {};
+    
+    public Car(String plate, String brands) {
     	plate=licencePlate;
-    	this.brand=brand;
+    	brand=brands;
     }
 	public String getLicencePlate() {
 		return licencePlate;

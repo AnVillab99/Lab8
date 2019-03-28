@@ -27,28 +27,7 @@ public class UserController {
         }catch(Exception e){
             return new ResponseEntity<>(e.getStackTrace(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-    
-    @ResponseBody
-    @RequestMapping(value="/{id}",method = RequestMethod.GET)
-    
-    public ResponseEntity<?> getUserI(UUID id){
-        try{
-            return new ResponseEntity<>(userServices.get(id), HttpStatus.OK);
-        }catch(Exception e){
-            return new ResponseEntity<>(e.getStackTrace(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    
-    @ResponseBody
-    @RequestMapping(value="/name/{name}",method = RequestMethod.GET)
-    public ResponseEntity<?> getUserN(String name){
-        try{
-            return new ResponseEntity<>(userServices.get(name), HttpStatus.OK);
-        }catch(Exception e){
-            return new ResponseEntity<>(e.getStackTrace(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    }  
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})

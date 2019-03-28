@@ -52,8 +52,6 @@ public class UserServices implements IUserServices {
 	}
 	@Override
 	public void delete(UUID u) {
-	
-
 		userRepository.delete(get(u));
 
 	}
